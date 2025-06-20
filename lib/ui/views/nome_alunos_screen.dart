@@ -51,7 +51,7 @@ class _NomeAlunosScreenState extends State<NomeAlunosScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: height * 0.03),
-               Image.asset('assets/gradexLogo.png', 
+               Image.asset('assets/images/gradexLogo.png', 
               height: height * 0.4, 
               fit: BoxFit.contain),
               const SizedBox(height: 20),

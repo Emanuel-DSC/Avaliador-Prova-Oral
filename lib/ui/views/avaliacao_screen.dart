@@ -1,38 +1,41 @@
-import 'package:avaliador_prova_oral/ui/themes.dart';
-import 'package:avaliador_prova_oral/ui/widgets/my_app_bar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../services/storage_service.dart';
+import '../themes.dart';
 import '../viewmodels/avaliacao_viewmodel.dart';
+import '../widgets/my_app_bar_widget.dart';
 import '../widgets/my_elevated_button.dart';
 import '../widgets/my_text_field_widget.dart';
 import 'resultado_screen.dart';
 
-class AvaliacaoScreen extends StatefulWidget {
+class AvaliacaoScreen extends StatelessWidget {
   final List<String> nomes;
+
   const AvaliacaoScreen({super.key, required this.nomes});
 
   @override
-  _AvaliacaoScreenState createState() => _AvaliacaoScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) {
+        final viewModel = AvaliacaoViewModel();
+        viewModel.iniciar(nomes);
+        return viewModel;
+      },
+      child: const _AvaliacaoBody(),
+    );
+  }
 }
 
-class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
-  late AvaliacaoViewModel viewModel;
-  int perguntaAtual = 0;
+class _AvaliacaoBody extends StatelessWidget {
+  const _AvaliacaoBody();
 
-  @override
-  void initState() {
-    super.initState();
-    viewModel = AvaliacaoViewModel(widget.nomes);
-  }
-
-  void _salvarENext() async {
-    if (perguntaAtual < 4) {
-      setState(() {
-        perguntaAtual++;
-      });
+  void _salvarENext(BuildContext context, AvaliacaoViewModel viewModel) async {
+    if (!viewModel.isUltimaPergunta) {
+      viewModel.proximaPergunta();
     } else {
       await StorageService.saveData({
-        'nomes': widget.nomes,
+        'nomes': viewModel.nomes,
         'respostas': viewModel.respostas,
         'observacoes': viewModel.observacoes,
       });
@@ -41,8 +44,8 @@ class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
         context,
         MaterialPageRoute(
           builder: (_) => ResultadoScreen(
+            nomes: viewModel.nomes,
             respostas: viewModel.respostas,
-            nomes: widget.nomes,
             observacoes: viewModel.observacoes,
           ),
         ),
@@ -58,12 +61,14 @@ class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
           scale: 1.3,
           child: Radio<double>(
             fillColor: WidgetStateProperty.resolveWith<Color>(
-            (states) => states.contains(WidgetState.selected) ? Colors.blue : Colors.grey.withOpacity(0.3),
-          ),
+              (states) => states.contains(WidgetState.selected)
+                  ? Colors.blue
+                  : Colors.grey.withOpacity(0.3),
+            ),
             value: valor,
             groupValue: group,
             onChanged: onChanged,
-            visualDensity: VisualDensity.standard,
+            visualDensity: VisualDensity.compact,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
         ),
@@ -79,7 +84,9 @@ class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
     );
   }
 
-  Widget _avaliacaoAluno(int alunoIndex) {
+  Widget _avaliacaoAluno(BuildContext context, int alunoIndex) {
+    final viewModel = context.watch<AvaliacaoViewModel>();
+    final perguntaAtual = viewModel.perguntaAtual;
     final resposta = viewModel.respostas[alunoIndex][perguntaAtual];
     final obsController = TextEditingController(
       text: viewModel.observacoes[alunoIndex][perguntaAtual],
@@ -94,9 +101,10 @@ class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Text(widget.nomes[alunoIndex].toUpperCase(),
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text(
+                viewModel.nomes[alunoIndex].toUpperCase(),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
             const Divider(height: 16, color: Colors.transparent),
             const Padding(
@@ -122,42 +130,41 @@ class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _radio(
-                    0.0,
-                    resposta['resposta']!,
-                    (val) => setState(() => viewModel.definirNota(
-                        alunoIndex, perguntaAtual, 'resposta', val!))),
+                  0.0,
+                  resposta['resposta']!,
+                  (val) => viewModel.definirNota(alunoIndex, perguntaAtual, 'resposta', val!),
+                ),
                 _radio(
-                    0.5,
-                    resposta['resposta']!,
-                    (val) => setState(() => viewModel.definirNota(
-                        alunoIndex, perguntaAtual, 'resposta', val!))),
+                  0.5,
+                  resposta['resposta']!,
+                  (val) => viewModel.definirNota(alunoIndex, perguntaAtual, 'resposta', val!),
+                ),
                 _radio(
-                    1.0,
-                    resposta['resposta']!,
-                    (val) => setState(() => viewModel.definirNota(
-                        alunoIndex, perguntaAtual, 'resposta', val!))),
+                  1.0,
+                  resposta['resposta']!,
+                  (val) => viewModel.definirNota(alunoIndex, perguntaAtual, 'resposta', val!),
+                ),
                 const SizedBox(width: 14),
                 _radio(
-                    0.0,
-                    resposta['gramatica']!,
-                    (val) => setState(() => viewModel.definirNota(
-                        alunoIndex, perguntaAtual, 'gramatica', val!))),
+                  0.0,
+                  resposta['gramatica']!,
+                  (val) => viewModel.definirNota(alunoIndex, perguntaAtual, 'gramatica', val!),
+                ),
                 _radio(
-                    0.5,
-                    resposta['gramatica']!,
-                    (val) => setState(() => viewModel.definirNota(
-                        alunoIndex, perguntaAtual, 'gramatica', val!))),
+                  0.5,
+                  resposta['gramatica']!,
+                  (val) => viewModel.definirNota(alunoIndex, perguntaAtual, 'gramatica', val!),
+                ),
                 _radio(
-                    1.0,
-                    resposta['gramatica']!,
-                    (val) => setState(() => viewModel.definirNota(
-                        alunoIndex, perguntaAtual, 'gramatica', val!))),
+                  1.0,
+                  resposta['gramatica']!,
+                  (val) => viewModel.definirNota(alunoIndex, perguntaAtual, 'gramatica', val!),
+                ),
               ],
             ),
             const Divider(height: 20, color: Colors.transparent),
             MyTextField(
-              onChanged: (texto) =>
-                  viewModel.definirObservacao(alunoIndex, perguntaAtual, texto),
+              onChanged: (texto) => viewModel.definirObservacao(alunoIndex, perguntaAtual, texto),
               controller: obsController,
               inputType: TextInputType.text,
               hintText: 'Observação',
@@ -172,23 +179,25 @@ class _AvaliacaoScreenState extends State<AvaliacaoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<AvaliacaoViewModel>();
+
     return Scaffold(
       appBar: MyAppBar(
-        title: 'Pergunta ${perguntaAtual + 1} de 5',
+        title: 'Pergunta ${viewModel.perguntaAtual + 1} de 5',
         icon: Icons.arrow_back_ios_rounded,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.builder(
-          itemCount: widget.nomes.length,
-          itemBuilder: (context, index) => _avaliacaoAluno(index),
+          itemCount: viewModel.nomes.length,
+          itemBuilder: (context, index) => _avaliacaoAluno(context, index),
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(22),
         child: MyElevatedButton(
-          text: perguntaAtual < 4 ? 'Próxima Pergunta' : 'Ver Resultados',
-          function: _salvarENext,
+          text: viewModel.isUltimaPergunta ? 'Ver Resultados' : 'Próxima Pergunta',
+          function: () => _salvarENext(context, viewModel),
         ),
       ),
     );

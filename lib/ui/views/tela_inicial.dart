@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/inicio_screen_viewmodel.dart';
+import '../viewmodels/tela_inicial_viewmodel.dart';
 import '../widgets/my_app_bar_widget.dart';
 import '../widgets/my_elevated_button.dart';
 import '../widgets/my_text_field_widget.dart';
