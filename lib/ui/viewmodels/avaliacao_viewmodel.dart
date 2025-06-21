@@ -32,12 +32,18 @@ class AvaliacaoViewModel extends ChangeNotifier {
 
   void definirObservacao(int alunoIndex, int perguntaIndex, String texto) {
     _observacoes[alunoIndex][perguntaIndex] = texto;
-    notifyListeners();
   }
 
   void proximaPergunta() {
     if (_perguntaAtual < 4) {
       _perguntaAtual++;
+      notifyListeners();
+    }
+  }
+
+  void anteriorPergunta() {
+    if (_perguntaAtual > 0) {
+      _perguntaAtual--;
       notifyListeners();
     }
   }

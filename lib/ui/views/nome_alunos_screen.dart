@@ -36,6 +36,17 @@ class _NomeAlunosScreenState extends State<NomeAlunosScreen> {
   }
 
   @override
+  void dispose() {
+    debugPrint('NomeAlunosScreen dispose called'); // ADD THIS
+    debugPrint('NomeAlunosScreen dispose called'); // ADD THIS
+    debugPrint('NomeAlunosScreen dispose called'); // ADD THIS
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     double height = size.height;
@@ -51,9 +62,8 @@ class _NomeAlunosScreenState extends State<NomeAlunosScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: height * 0.03),
-               Image.asset('assets/images/gradexLogo.png', 
-              height: height * 0.4, 
-              fit: BoxFit.contain),
+              Image.asset('assets/images/gradexLogo.png',
+                  height: height * 0.4, fit: BoxFit.contain),
               const SizedBox(height: 20),
               const Text('Digite os nomes dos alunos:'),
               const SizedBox(height: 20),
@@ -75,7 +85,10 @@ class _NomeAlunosScreenState extends State<NomeAlunosScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _iniciarAvaliacao,
         backgroundColor: AppTheme.primaryColor,
-        child: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white,),
+        child: const Icon(
+          Icons.arrow_forward_ios_rounded,
+          color: Colors.white,
+        ),
       ),
     );
   }
