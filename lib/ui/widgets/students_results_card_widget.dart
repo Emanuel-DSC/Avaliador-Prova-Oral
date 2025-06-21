@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'lottie_display_widget.dart';
 import 'quest_result_detail_widget.dart';
 
 class StudentResultCard extends StatelessWidget {
   final String studentName;
   final List<Map<String, double>> studentRespostas;
   final List<String> studentObservacoes;
+  final ValueChanged<double>? onScoreCalculated;
 
   const StudentResultCard({
     super.key,
     required this.studentName,
     required this.studentRespostas,
     required this.studentObservacoes,
+    this.onScoreCalculated,
   });
 
   double _calculateStudentTotalScore() {
@@ -25,6 +27,10 @@ class StudentResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double finalScore = _calculateStudentTotalScore();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onScoreCalculated?.call(finalScore);
+    });
 
     return SingleChildScrollView(
       child: Column(
@@ -41,6 +47,8 @@ class StudentResultCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
+                LottieDisplay(score: finalScore),
+                const SizedBox(height: 16),
                 ...List.generate(studentRespostas.length, (i) {
                   final resposta = studentRespostas[i];
                   final obs = studentObservacoes[i];
@@ -51,14 +59,6 @@ class StudentResultCard extends StatelessWidget {
                   );
                 }),
                 const Divider(color: Colors.transparent, height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 22),
-                  child: Text(
-                    'Nota final: ${finalScore.toStringAsFixed(1)} / 10'.toUpperCase(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 18),
-                  ),
-                ),
               ],
             ),
           ),
