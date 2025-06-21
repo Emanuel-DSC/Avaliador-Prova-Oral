@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../themes.dart'; 
+import '../../utils/themes.dart';
 import '../viewmodels/avaliacao_viewmodel.dart';
 import 'my_radio_widget.dart'; 
 import 'my_text_field_widget.dart'; 

@@ -1,7 +1,7 @@
-import 'package:avaliador_prova_oral/ui/themes.dart';
 import 'package:avaliador_prova_oral/ui/widgets/my_app_bar_widget.dart';
 import 'package:avaliador_prova_oral/ui/widgets/my_text_field_widget.dart';
 import 'package:flutter/material.dart';
+import '../../utils/themes.dart';
 import 'avaliacao_screen.dart';
 
 class NomeAlunosScreen extends StatefulWidget {
@@ -37,9 +37,6 @@ class _NomeAlunosScreenState extends State<NomeAlunosScreen> {
 
   @override
   void dispose() {
-    debugPrint('NomeAlunosScreen dispose called'); // ADD THIS
-    debugPrint('NomeAlunosScreen dispose called'); // ADD THIS
-    debugPrint('NomeAlunosScreen dispose called'); // ADD THIS
     for (var controller in _controllers) {
       controller.dispose();
     }

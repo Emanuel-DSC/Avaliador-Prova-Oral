@@ -43,9 +43,9 @@ class _AvaliacaoBody extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (_) => ResultadoScreen(
-            nomes: viewModel.nomes,
-            respostas: viewModel.respostas,
-            observacoes: viewModel.observacoes,
+            names: viewModel.nomes,
+            answers: viewModel.respostas,
+            observations: viewModel.observacoes,
           ),
         ),
       );
